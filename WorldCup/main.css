@@ -1,4 +1,9 @@
 #map {
-    width: 1200px;
-    height: 800px;
+    width: 800px;
+    height: 600px;
+}
+
+#slider {
+    width: 500px;
+    margin: 0 15px 0 15px;
 }

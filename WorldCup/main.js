@@ -8,6 +8,20 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id: 'mapbox.light'
 }).addTo(map);
 
+function updateTextInput(value) {
+    $('#textInput').html(value);
+    
+    L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
+}
+
+var presence = {};
+
+for (let match of world_cup_matches) {
+    if (!presence[match["Year"]]) presence[match["Year"]] = [];
+    if (!presence[match["Year"]].includes(match["Home Team Name"])) presence[match["Year"]].push(match["Home Team Name"]);
+    if (!presence[match["Year"]].includes(match["Away Team Name"])) presence[match["Year"]].push(match["Away Team Name"]);
+}
+
 for (let f of countriesGEOJSON.features) {
     // console.log(f.properties);
     for (let cup of world_cups) {
@@ -18,7 +32,17 @@ for (let f of countriesGEOJSON.features) {
     }
 }
 
-var geojson = L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
+for (let f of countriesGEOJSON.features) {
+    // console.log(f.properties);
+    for (let cup in presence) {
+        if (presence.hasOwnProperty(cup)) {
+            if (!f.properties.num_cups) f.properties.num_cups = 0;
+            if (presence[cup].includes(f.properties.name)) f.properties.num_cups++;
+        }
+    }
+}
+
+var layer = L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
 
 function getColor(d) {
     return d > 4 ? '#800026' :
@@ -29,14 +53,22 @@ function getColor(d) {
                         '#FFF';
 }
 
+function presenceColor(d) {
+    return d > 15 ? '#4b0082' : d > 10 ? '#7c48a1' : d > 5 ? '#a883c0' : d > 0 ? '#d4bfe0' : '#fff';
+}
+
+function present(name) {
+    return presence[$('#textInput').html()].includes(name) ? '#7c48a1' : '#fff';
+}
+
 function style(feature) {
     return {
-        fillColor: getColor(feature.properties.cups),
+        fillColor: present(feature.properties.name),
         weight: 2,
         opacity: 1,
         color: 'white',
         dashArray: '3',
-        fillOpacity: 0.7
+        fillOpacity: 0.5
     };
 }
 
