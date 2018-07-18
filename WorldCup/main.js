@@ -1,16 +1,19 @@
 var map = L.map('map').setView([0, 0], 2);
 
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    id: 'mapbox.light'
-}).addTo(map);
-
-function updateTextInput(value) {
+function updateMap(value) {
     $('#textInput').html(value);
-    
+    map.eachLayer(function (layer) {
+        map.removeLayer(layer);
+    });
+
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.light'
+    }).addTo(map);
+
     L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
 }
 
@@ -42,7 +45,9 @@ for (let f of countriesGEOJSON.features) {
     }
 }
 
-var layer = L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
+// var layer = L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
+
+updateMap(1930);
 
 function getColor(d) {
     return d > 4 ? '#800026' :
