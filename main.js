@@ -46,20 +46,7 @@ for (let f of countriesGEOJSON.features) {
 
 updateMap(1930);
 
-function getColor(d) {
-    return d > 4 ? '#800026' :
-        d > 3 ? '#BD0026' :
-            d > 2 ? '#E31A1C' :
-                d > 1 ? '#FC4E2A' :
-                    d > 0 ? '#FD8D3C' :
-                        '#FFF';
-}
-
-function presenceColor(d) {
-    return d > 15 ? '#4b0082' : d > 10 ? '#7c48a1' : d > 5 ? '#a883c0' : d > 0 ? '#d4bfe0' : '#fff';
-}
-
-function present(name, cup, year) {
+function getColor(name, cup, year) {
 
     let fst = cup.Winner == name;
     let snd = cup["Runners-Up"] == name;
@@ -81,42 +68,31 @@ function style(feature) {
     }
 
     return {
-        fillColor: present(feature.properties.name, cup, year),
+        fillColor: getColor(feature.properties.name, cup, year),
         weight: 2,
         opacity: 1,
         color: 'white',
         dashArray: '3',
-        fillOpacity: 0.5
+        fillOpacity: 0.7
     };
 }
 
-function highlightFeature(e) {
-    var layer = e.target;
+var legend = L.control({ position: 'bottomright' });
 
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
+legend.onAdd = function (map) {
 
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
+    let div = L.DomUtil.create('div', 'info legend'),
+        colors = ['#FFFF00', '#808080', '#CC6600', '#6666ff', '#00CC00', '#fff'],
+        labels = ["Winner", "Runners-Up", "Third", "Fourth", "Present", "Not in this cup"];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < labels.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + colors[i] + '"></i> ' +
+            labels[i] + '<br>';
     }
-}
 
-function resetHighlight(e) {
-    geojson.resetStyle(e.target);
-}
+    return div;
+};
 
-function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
-}
-
-function onEachFeature(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: zoomToFeature
-    });
-}
+legend.addTo(map);
