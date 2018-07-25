@@ -8,9 +8,6 @@ function updateMap(value) {
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.light'
     }).addTo(map);
 
@@ -62,13 +59,29 @@ function presenceColor(d) {
     return d > 15 ? '#4b0082' : d > 10 ? '#7c48a1' : d > 5 ? '#a883c0' : d > 0 ? '#d4bfe0' : '#fff';
 }
 
-function present(name) {
-    return presence[$('#textInput').html()].includes(name) ? '#7c48a1' : '#fff';
+function present(name, cup, year) {
+
+    let fst = cup.Winner == name;
+    let snd = cup["Runners-Up"] == name;
+    let trd = cup.Third == name;
+    let fth = cup.Fourth == name;
+
+    return fst ? '#FFFF00' : snd ? '#808080' : trd ? '#CC6600' : fth ? '#6666ff' : presence[year].includes(name) ? '#00CC00' : '#fff';
 }
 
 function style(feature) {
+    let cup;
+    let year = $('#slider').val();
+
+    for (let c of world_cups) {
+        if (c.Year == year) {
+            cup = c;
+            break;
+        }
+    }
+
     return {
-        fillColor: present(feature.properties.name),
+        fillColor: present(feature.properties.name, cup, year),
         weight: 2,
         opacity: 1,
         color: 'white',
