@@ -22,6 +22,8 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
 </head>
 
 <body>
@@ -29,12 +31,13 @@
     <input id="slider" type="range" min="1930" max="2014" value="1930" step="4" onchange="updateMap(this.value);">
     <label id="textInput">1930</label>
     <div id="map"></div>
-
+	<div id="scatter"></div>
 </body>
 
 <script src="WorldCupMatches.js"></script>
 <script src="WorldCups.js"></script>
 <script src="countries.geojson.js"></script>
+<script src="scatter.js"></script>
 <script src="main.js"></script>
 
 </html>
