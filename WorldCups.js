@@ -198,7 +198,7 @@ var world_cups =
             "Winner": "Brazil",
             "Runners-Up": "Germany",
             "Third": "Turkey",
-            "Fourth": "Korea Republic",
+            "Fourth": "South Korea",
             "GoalsScored": 161,
             "QualifiedTeams": 32,
             "MatchesPlayed": 64,
