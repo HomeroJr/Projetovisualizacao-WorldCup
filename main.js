@@ -46,8 +46,6 @@ for (let f of countriesGEOJSON.features) {
 
 updateMap(1930);
 
-var category = "titles";
-var categories = ["titles", "goalsScored", "top4"];
 
 var titles = [
 	{text:"Brazil", size: 100},
@@ -215,11 +213,15 @@ size: 2},
 
 ]
 
+var flag = 0;
+
+var category = "titles";
+var categories = ["titles", "goalsScored", "top4"];
+
 function wordCloud(selector) {
 
     var fill = d3.scale.category20();
 
-    //Construct the word cloud's SVG element
     var svg = d3.select(selector).append("svg")
         .attr("width", 500)
         .attr("height", 500)
@@ -227,12 +229,10 @@ function wordCloud(selector) {
         .attr("transform", "translate(250,250)");
 
 
-    //Draw the word cloud
     function draw(words) {
         var cloud = svg.selectAll("g text")
                         .data(goalsScored, function(d) { return d.text; })
 
-        //Entering words
         cloud.enter()
             .append("text")
             .style("font-family", "Impact")
@@ -241,7 +241,6 @@ function wordCloud(selector) {
             .attr('font-size', 1)
             .text(function(d) { return d.text; });
 
-        //Entering and existing words
         cloud
             .transition()
                 .duration(600)
@@ -251,7 +250,6 @@ function wordCloud(selector) {
                 })
                 .style("fill-opacity", 1);
 
-        //Exiting words
         cloud.exit()
             .transition()
                 .duration(200)
@@ -261,14 +259,8 @@ function wordCloud(selector) {
     }
 
 
-    //Use the module pattern to encapsulate the visualisation code. We'll
-    // expose only the parts that need to be public.
     return {
 
-        //Recompute the word cloud for a new set of words. This method will
-        // asycnhronously call draw when the layout has been computed.
-        //The outside world will need to call this function, so make it part
-        // of the wordCloud return value.
         update: function(words) {
             d3.layout.cloud().size([500, 500])
                 .words(words)
@@ -282,10 +274,6 @@ function wordCloud(selector) {
     }
 
 }
-var i = 0;
-//This method tells the word cloud to redraw with a new set of words.
-//In reality the new words would probably come from a server request,
-// user input or some other source.
 function showNewWords(vis, category) {
 
 	
@@ -294,17 +282,13 @@ function showNewWords(vis, category) {
     i = (i+1) %2;
 }
 
-//Create a new instance of the word cloud visualisation.
 var myWordCloud = wordCloud('#cloud');
 
-$('button').change(() => {
- showNewWords(vis,category);
-})
 
-//Start cycling through the demo data
 showNewWords(myWordCloud, "titles");
 
-
+///////////////
+///////////////////
 function getColor(name, cup, year) {
 
     let fst = cup.Winner == name;
