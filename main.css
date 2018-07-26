@@ -1,5 +1,5 @@
 #map {
-    width: 1000px;
+    width: 900px;
     height: 600px;
 }
 
@@ -23,4 +23,9 @@
     float: left;
     margin-right: 8px;
     opacity: 0.7;
+}
+
+#cloud{
+	float:top;
+	width: 250px;
 }
