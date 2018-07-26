@@ -44,9 +44,10 @@ for (let f of countriesGEOJSON.features) {
     }
 }
 
-// var layer = L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
-
 updateMap(1930);
+
+function updateCloud(category) {
+}
 
 function getColor(name, cup, year) {
 
