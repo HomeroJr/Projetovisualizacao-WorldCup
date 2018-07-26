@@ -46,74 +46,6 @@ for (let f of countriesGEOJSON.features) {
 
 updateMap(1930);
 
-function wordCloud(selector) {
-
-    var fill = d3.scale.category20();
-
-    //Construct the word cloud's SVG element
-    var svg = d3.select(selector).append("svg")
-        .attr("width", 500)
-        .attr("height", 500)
-        .append("g")
-        .attr("transform", "translate(250,250)");
-
-
-    //Draw the word cloud
-    function draw(words) {
-        var cloud = svg.selectAll("g text")
-                        .data(goalsScored, function(d) { return d.text; })
-
-        //Entering words
-        cloud.enter()
-            .append("text")
-            .style("font-family", "Impact")
-            .style("fill", function(d, i) { return fill(i); })
-            .attr("text-anchor", "middle")
-            .attr('font-size', 1)
-            .text(function(d) { return d.text; });
-
-        //Entering and existing words
-        cloud
-            .transition()
-                .duration(600)
-                .style("font-size", function(d) { return d.size + "px"; })
-                .attr("transform", function(d) {
-                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                })
-                .style("fill-opacity", 1);
-
-        //Exiting words
-        cloud.exit()
-            .transition()
-                .duration(200)
-                .style('fill-opacity', 1e-6)
-                .attr('font-size', 1)
-                .remove();
-    }
-
-
-    //Use the module pattern to encapsulate the visualisation code. We'll
-    // expose only the parts that need to be public.
-    return {
-
-        //Recompute the word cloud for a new set of words. This method will
-        // asycnhronously call draw when the layout has been computed.
-        //The outside world will need to call this function, so make it part
-        // of the wordCloud return value.
-        update: function(words) {
-            d3.layout.cloud().size([500, 500])
-                .words(words)
-                .padding(5)
-                .rotate(function() { return ~~(Math.random() * 2) * 90; })
-                .font("Impact")
-                .fontSize(function(d) { return d.size; })
-                .on("end", draw)
-                .start();
-        }
-    }
-
-}
-
 var category = "titles";
 var categories = ["titles", "goalsScored", "top4"];
 
@@ -131,28 +63,17 @@ var titles = [
 var goalsScored = [
 	{text: "France", 
 size: 54}, 
-{text: "Mexico", 
-size: 29}, 
-{text: "United States of America", 
-size: 19}, 
-{text: "Belgium", 
-size: 27}, 
-{text: "Yugoslavia", 
-size: 30}, 
-{text: "Brazil", 
-size: 112.5}, 
-{text: "Romania", 
-size: 15}, 
-{text: "Peru", 
-size: 9.5}, 
-{text: "Argentina", 
-size: 66.5}, 
-{text: "Chile", 
-size: 20.5}, 
-{text: "Bolivia", 
-size: 0.5}, 
-{text: "Paraguay", 
-size: 15}, 
+{text: "Mexico", size: 29}, 
+{text: "United States of America",size: 19}, 
+{text: "Belgium", size: 27}, 
+{text: "Yugoslavia",size: 30}, 
+{text: "Brazil", size: 112.5}, 
+{text: "Romania",size: 15}, 
+{text: "Peru", size: 9.5}, 
+{text: "Argentina",size: 66.5}, 
+{text: "Chile", size: 20.5}, 
+{text: "Bolivia",size: 0.5}, 
+{text: "Paraguay",size: 15}, 
 {text: "Uruguay", 
 size: 40}, 
 {text: "Austria", 
@@ -294,32 +215,91 @@ size: 2},
 
 ]
 
-var goals = 0;
-for(var i in countries_dataset){
-	console.log("{text: \"" + countries_dataset[i].name + "\", ");
-	for(j in countries_dataset[i].cups){
-		goals += countries_dataset[i].cups[j].goals;
-	}
-	console.log("size: " + goals/2 + "},");
-	goals = 0;
-	
-	
-	
+function wordCloud(selector) {
+
+    var fill = d3.scale.category20();
+
+    //Construct the word cloud's SVG element
+    var svg = d3.select(selector).append("svg")
+        .attr("width", 500)
+        .attr("height", 500)
+        .append("g")
+        .attr("transform", "translate(250,250)");
+
+
+    //Draw the word cloud
+    function draw(words) {
+        var cloud = svg.selectAll("g text")
+                        .data(goalsScored, function(d) { return d.text; })
+
+        //Entering words
+        cloud.enter()
+            .append("text")
+            .style("font-family", "Impact")
+            .style("fill", function(d, i) { return fill(i); })
+            .attr("text-anchor", "middle")
+            .attr('font-size', 1)
+            .text(function(d) { return d.text; });
+
+        //Entering and existing words
+        cloud
+            .transition()
+                .duration(600)
+                .style("font-size", function(d) { return d.size + "px"; })
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .style("fill-opacity", 1);
+
+        //Exiting words
+        cloud.exit()
+            .transition()
+                .duration(200)
+                .style('fill-opacity', 1e-6)
+                .attr('font-size', 1)
+                .remove();
+    }
+
+
+    //Use the module pattern to encapsulate the visualisation code. We'll
+    // expose only the parts that need to be public.
+    return {
+
+        //Recompute the word cloud for a new set of words. This method will
+        // asycnhronously call draw when the layout has been computed.
+        //The outside world will need to call this function, so make it part
+        // of the wordCloud return value.
+        update: function(words) {
+            d3.layout.cloud().size([500, 500])
+                .words(words)
+                .padding(5)
+                .rotate(function() { return ~~(Math.random() * 2) * 90; })
+                .font("Impact")
+                .fontSize(function(d) { return d.size; })
+                .on("end", draw)
+                .start();
+        }
+    }
+
 }
-
-
+var i = 0;
 //This method tells the word cloud to redraw with a new set of words.
 //In reality the new words would probably come from a server request,
 // user input or some other source.
 function showNewWords(vis, category) {
 
-
+	
     vis.update(goalsScored)
     //setTimeout(function() { showNewWords(vis)}, 2000)
+    i = (i+1) %2;
 }
 
 //Create a new instance of the word cloud visualisation.
 var myWordCloud = wordCloud('#cloud');
+
+$('button').change(() => {
+ showNewWords(vis,category);
+})
 
 //Start cycling through the demo data
 showNewWords(myWordCloud, "titles");
