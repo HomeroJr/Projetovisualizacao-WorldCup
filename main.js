@@ -12,6 +12,8 @@ function updateMap(value) {
     }).addTo(map);
 
     L.geoJson(countriesGEOJSON, { style: style }).addTo(map);
+
+    updateStats();
 }
 
 var presence = {};
@@ -57,15 +59,8 @@ function getColor(name, cup, year) {
 }
 
 function style(feature) {
-    let cup;
     let year = $('#slider').val();
-
-    for (let c of world_cups) {
-        if (c.Year == year) {
-            cup = c;
-            break;
-        }
-    }
+    let cup = getCurrentCup();
 
     return {
         fillColor: getColor(feature.properties.name, cup, year),
@@ -85,7 +80,6 @@ legend.onAdd = function (map) {
         colors = ['#FFFF00', '#808080', '#CC6600', '#6666ff', '#00CC00', '#fff'],
         labels = ["Winner", "Runners-Up", "Third", "Fourth", "Present", "Not in this cup"];
 
-    // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < labels.length; i++) {
         div.innerHTML +=
             '<i style="background:' + colors[i] + '"></i> ' +
@@ -96,3 +90,54 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
+
+var stats = L.control({ position: 'topright' });
+
+stats.onAdd = function (map) {
+
+    let div = L.DomUtil.create('div', 'info legend');
+
+    let stats = getCupStats();
+
+    div.innerHTML +=
+        '<i class="fas fa-futbol"></i> <small>Goals</small> <span id="goals">' + stats.goals + '</span> <br>' +
+        '<i class="fas fa-square" style="color: yellow"></i> <small>Yellow cards</small> <span id="yellows">' + stats.yellows + '</span> <br>' +
+        '<i class="fas fa-square" style="color: red"></i> <small>Red cards</small> <span id="reds">' + stats.reds + '</span> <br>';
+
+    return div;
+};
+
+stats.addTo(map);
+
+function getCupStats() {
+    let cup = getCurrentCup();
+
+    let matches = world_cup_matches.filter(m => m.Year == cup.Year);
+
+    let roundIDs = matches.map(m => m.RoundID);
+
+    let goals = cup.GoalsScored,
+        yellows = world_cup_players.filter(p => p.Event.includes('Y') && roundIDs.includes(p.RoundID)).length,
+        reds = world_cup_players.filter(p => p.Event.includes('R') && roundIDs.includes(p.RoundID)).length;
+
+    return { goals: goals, reds: reds, yellows: yellows };
+}
+
+function updateStats() {
+    let stats = getCupStats();
+    $('#goals').html(stats.goals);
+    $('#reds').html(stats.reds);
+    $('#yellows').html(stats.yellows);
+}
+
+function getCurrentCup() {
+    let year = $('#slider').val();
+    let cup;
+    for (let c of world_cups) {
+        if (c.Year == year) {
+            cup = c;
+            break;
+        }
+    }
+    return cup;
+}
